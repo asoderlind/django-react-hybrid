@@ -1,5 +1,5 @@
 """
-This module contains the catchall view for the potato_app app.
+This module contains the catchall view for the app app.
 """
 
 import urllib.request
