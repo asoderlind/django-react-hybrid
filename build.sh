@@ -1,3 +1,4 @@
+# Production build script
 cd frontend
 
 # 1. Build the frontend
