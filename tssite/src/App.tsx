@@ -51,8 +51,8 @@ function AppEntry() {
   return (
     <section>
       <Routes>
-        <Route path="/" element={<div>test</div>}></Route>
-        <Route path="/hehehe" element={<div>he</div>}></Route>
+        <Route path="/login" element={<div>login</div>}></Route>
+        <Route path="*" element={<div>catchall</div>}></Route>
       </Routes>
     </section>
   );
