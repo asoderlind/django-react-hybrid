@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# Cache ignoring-files
+/.cache
+
 # testing
 /coverage
 

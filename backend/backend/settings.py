@@ -20,6 +20,7 @@ BACKEND_DIR = BASE_DIR
 FRONTEND_DIR = BASE_DIR.parent / "frontend"
 
 DEBUG = os.environ.get("DJANGO_ENV") == "development"
+
 ALLOWED_HOSTS = ["localhost"]
 
 # Quick-start development settings - unsuitable for production
@@ -32,9 +33,6 @@ SECRET_KEY = "django-insecure-xm!n35m767227$*j419)8jv^hd-*ywxsbw#^48)9nqdom(i@_-
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
-# Application definition
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -59,6 +57,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "backend.urls"
 
+# Serve the templates from the frontent dir build dir in production
+# In development, we proxy the requests to the react dev server @ localhost:3000
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -77,10 +77,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+# Database, we use sqlite3 for development
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -90,8 +87,6 @@ DATABASES = {
 
 
 # Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -121,19 +116,11 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATICFILES_DIRS = [FRONTEND_DIR / "build" / "static"]
-
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 STATIC_ROOT = BACKEND_DIR / "static"
-
 STATIC_URL = "/static/"
-
 WHITENOISE_ROOT = FRONTEND_DIR / "build" / "root"
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
