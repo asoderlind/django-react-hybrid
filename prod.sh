@@ -14,7 +14,8 @@ cd ..
 
 cd backend
 
-poetry shell
+source "$HOME"/.envs/django-react/bin/activate
+pip install -r requirements.txt
 
 # 3. Build the backend
 ./manage.py collectstatic --no-input
