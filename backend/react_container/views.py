@@ -21,7 +21,7 @@ def catchall_dev(request, upstream="http://localhost:3000"):
     upstream_url = upstream + request.path
     logger.info("Attempting to proxy request to %s", upstream_url)
     try:
-        response = requests.get(upstream_url, stream=True)
+        response = requests.get(upstream_url, stream=True, timeout=60)
         content_type = response.headers.get("Content-Type")
 
         if content_type == "text/html; charset=UTF-8":
