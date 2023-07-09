@@ -1,61 +1,36 @@
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import jwtDecode from "jwt-decode";
-import { User } from "../models";
+import { AuthToken, TokenResponse } from "../models";
 
 interface ContextProps {
-  user: User | null | any;
-  authTokens: string | null;
-  loginUser: (e: any) => void;
+  user: AuthToken | null;
+  setUser: (user: AuthToken) => void;
+  authTokens: TokenResponse | null;
+  setAuthTokens: (data: TokenResponse) => void;
   logoutUser: (e: any) => void;
 }
 
-const AuthContext = createContext<ContextProps>({
-  user: null,
-  authTokens: null,
-  loginUser: (e: any) => {},
-  logoutUser: (e: any) => {},
-});
+const AuthContext = createContext<Partial<ContextProps>>({});
 
 export default AuthContext;
 
-export const AuthProvider = ({ children }: any) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   let [user, setUser] = useState(() =>
     localStorage.getItem("authTokens")
-      ? jwtDecode(localStorage.getItem("authTokens") as string)
+      ? (jwtDecode(localStorage.getItem("authTokens") as string) as AuthToken)
       : null
   );
   let [authTokens, setAuthTokens] = useState(() =>
     localStorage.getItem("authTokens")
-      ? JSON.parse(localStorage.getItem("authTokens") as string)
+      ? (JSON.parse(
+          localStorage.getItem("authTokens") as string
+        ) as TokenResponse)
       : null
   );
-  let [loading, setLoading] = useState(true);
 
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  let loginUser = async (e?: React.FormEvent<HTMLFormElement>) => {
-    const form = e.preventDefault() as HTMLFormElement;
-    const response = await fetch("http://localhost:8000/api/token/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: (form.elements.namedItem("username") as HTMLInputElement)
-          ?.value,
-        password: (form.elements.namedItem("password") as HTMLInputElement)
-          ?.value,
-      }),
-    });
-    let data = await response.json();
-    if (data) {
-      localStorage.setItem("authTokens", JSON.stringify(data));
-      setAuthTokens(data);
-      setUser(jwtDecode(data.access));
-      navigate("/");
-    } else {
-      alert("Something went wrong while loggin in the user!");
-    }
-  };
 
   let logoutUser = () => {
     localStorage.removeItem("authTokens");
@@ -65,34 +40,32 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const updateToken = async () => {
-    const response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ refresh: authTokens?.refresh }),
-    });
+    const apiUrl = "http://127.0.0.1:8000";
+    try {
+      const response = await fetch(`${apiUrl}/api/token/refresh/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refresh: authTokens?.refresh }),
+      });
 
-    console.log(response);
+      if (!response.ok) {
+        throw new Error("Something went wrong while refreshing the token!");
+      }
 
-    if (response.status === 200) {
       const data = await response.json();
       setAuthTokens(data);
       setUser(jwtDecode(data.access));
       localStorage.setItem("authTokens", JSON.stringify(data));
-    } else {
+    } catch (error) {
+      console.error(error);
       logoutUser();
     }
+
     if (loading) {
       setLoading(false);
     }
-  };
-
-  let contextData = {
-    user: user,
-    authTokens: authTokens,
-    loginUser: loginUser,
-    logoutUser: logoutUser,
   };
 
   useEffect(() => {
@@ -105,10 +78,21 @@ export const AuthProvider = ({ children }: any) => {
         updateToken();
       }
     }, REFRESH_INTERVAL);
+
     return () => clearInterval(interval);
   }, [authTokens, loading]);
 
   return (
-    <AuthContext.Provider value={contextData}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        authTokens,
+        setAuthTokens,
+        logoutUser,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 };

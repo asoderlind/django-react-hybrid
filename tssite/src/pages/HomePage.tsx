@@ -5,7 +5,7 @@ const HomePage = () => {
   const { user } = React.useContext(AuthContext);
   return user ? (
     <div>
-      <p>You are logged in to the homepage!</p>
+      <p>You are logged in to the homepage! {user.username}</p>
     </div>
   ) : (
     <div>

@@ -1,15 +1,18 @@
 interface Config {
-  base_url: string;
+  baseUrl: string;
+  apiUrl: string;
   credentials: RequestCredentials;
 }
 
 const prod: Config = {
-  base_url: "",
+  baseUrl: "",
+  apiUrl: "/api",
   credentials: "same-origin",
 };
 
 const dev: Config = {
-  base_url: "http://localhost:8000",
+  baseUrl: "http://localhost:8000",
+  apiUrl: "http://localhost:8000/api",
   credentials: "include",
 };
 

@@ -1,6 +1,9 @@
 import AuthContext from "../context/AuthContext";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import jwtDecode from "jwt-decode";
+import { TokenResponse } from "../models";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
@@ -13,35 +16,7 @@ import {
   TextField,
   CircularProgress,
 } from "@material-ui/core";
-
-import { User } from "../models";
-
-import { useLocation } from "react-router-dom";
-import { config } from "../config";
-
-interface ServerResponse {
-  success?: boolean;
-  error?: string;
-  user_detail?: User; // assuming `User` is the interface you've defined for user details
-}
-
-interface SignInProps {
-  updateUserInfo: (userDetail: User) => void;
-}
-
-const LoginPage = () => {
-  let { loginUser } = useContext(AuthContext);
-
-  return (
-    <div>
-      <form onSubmit={loginUser}>
-        <input type="text" name="username" placeholder="Enter username" />
-        <input type="password" name="password" placeholder="enter password" />
-        <input type="submit" />
-      </form>
-    </div>
-  );
-};
+import { Token } from "typescript";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -85,94 +60,61 @@ function Copyright() {
   );
 }
 
-function SignIn({ updateUserInfo }: SignInProps) {
+const LoginPage = () => {
+  let { setAuthTokens, setUser } = useContext(AuthContext);
+
   const classes = useStyles();
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [csrfmiddlewaretoken, setCsrfmiddlewaretoken] = useState("");
 
-  let location = useLocation();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    var url = `${config.base_url}/auth/login`;
-    loading &&
-      fetch(url, {
-        method: "GET",
-        credentials: config.credentials,
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            return {};
-          } else {
-            return response.json();
-          }
-        })
-        .then((res) => {
-          if ("csrfmiddlewaretoken" in res) {
-            setCsrfmiddlewaretoken(res["csrfmiddlewaretoken"] as string);
-          }
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Something went wrong with connection!:", error);
-          setLoading(false);
-        });
-  }, [loading]);
-
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitting(true);
     setErrorMsg("");
 
     const formData = new FormData(event.currentTarget);
-    formData.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
 
-    var loginSuccess = false;
-    var submitFailedTemp = false;
-    var url = `${config.base_url}/auth/login`;
+    let loginSuccess = false;
+    let submitFailedTemp = false;
+    const url = "http://localhost:8000/api/token/";
+
     fetch(url, {
-      headers: {
-        Accept: "application/json",
-      },
       method: "POST",
-      credentials: config.credentials,
-      body: formData,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Object.fromEntries(formData.entries())),
     })
       .then((response) => {
         if (!response.ok) {
           submitFailedTemp = true;
-          return {};
+          return null;
         }
         return response.json();
       })
-      .then((data: ServerResponse) => {
+      .then((data: TokenResponse | null) => {
         var errorMsg = "";
         if (submitFailedTemp) {
           errorMsg = "Failed to authenticate, try again!";
         }
-        if ("success" in data) {
-          if (!data["success"]) {
-            errorMsg = data["error"]!;
-          } else {
-            loginSuccess = true;
+        if (data) {
+          loginSuccess = true;
+          localStorage.setItem("authTokens", JSON.stringify(data));
+          if (setAuthTokens) {
+            setAuthTokens(data);
           }
+          if (setUser) {
+            setUser(jwtDecode(data.access));
+          }
+          navigate("/");
         } else {
           errorMsg = "Login attempt failed, try again!";
         }
         setErrorMsg(errorMsg);
         setSubmitting(false);
-        if (loginSuccess) {
-          let { from } = location.state || { from: { pathname: "/" } };
-          //history.push(from);
-        }
       });
-  }
+  };
 
   return (
     <div className={classes.wrapper}>
@@ -185,7 +127,7 @@ function SignIn({ updateUserInfo }: SignInProps) {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <TextField
               variant="outlined"
               margin="normal"
@@ -221,7 +163,7 @@ function SignIn({ updateUserInfo }: SignInProps) {
               Sign In
             </Button>
           </form>
-          {(loading || submitting) && (
+          {submitting && (
             <CircularProgress size={68} className={classes.fabProgress} />
           )}
         </div>
@@ -231,6 +173,6 @@ function SignIn({ updateUserInfo }: SignInProps) {
       </Container>
     </div>
   );
-}
+};
 
 export default LoginPage;
