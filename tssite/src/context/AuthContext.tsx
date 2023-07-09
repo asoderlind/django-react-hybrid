@@ -34,14 +34,16 @@ export const AuthProvider = ({ children }: any) => {
 
   const navigate = useNavigate();
 
-  let loginUser = async (e: any) => {
-    e.preventDefault();
+  let loginUser = async (e?: React.FormEvent<HTMLFormElement>) => {
+    const form = e.preventDefault() as HTMLFormElement;
     const response = await fetch("http://localhost:8000/api/token/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        username: e.target.username.value,
-        password: e.target.password.value,
+        username: (form.elements.namedItem("username") as HTMLInputElement)
+          ?.value,
+        password: (form.elements.namedItem("password") as HTMLInputElement)
+          ?.value,
       }),
     });
     let data = await response.json();
@@ -55,8 +57,7 @@ export const AuthProvider = ({ children }: any) => {
     }
   };
 
-  let logoutUser = (e?: any) => {
-    e.preventDefault();
+  let logoutUser = () => {
     localStorage.removeItem("authTokens");
     setAuthTokens(null);
     setUser(null);
@@ -72,15 +73,16 @@ export const AuthProvider = ({ children }: any) => {
       body: JSON.stringify({ refresh: authTokens?.refresh }),
     });
 
-    const data = await response.json();
+    console.log(response);
+
     if (response.status === 200) {
+      const data = await response.json();
       setAuthTokens(data);
       setUser(jwtDecode(data.access));
       localStorage.setItem("authTokens", JSON.stringify(data));
     } else {
       logoutUser();
     }
-
     if (loading) {
       setLoading(false);
     }
