@@ -1,6 +1,13 @@
 import React, { ReactElement } from "react";
 import "./App.css";
-import { AppBar, Toolbar, Typography, Button } from "@material-ui/core";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Container,
+  Paper,
+} from "@material-ui/core";
 import {
   BrowserRouter as Router,
   Routes,
@@ -36,43 +43,44 @@ function AppEntry() {
   const [user, setUser] = React.useState<User | null>(null);
   console.log(JSON.parse(sessionStorage.getItem("user") || "{}"));
 
-  const handleLogin = () => setUser({ id: 1, username: "robin" });
-  const handleLogout = () => setUser(null);
-
   function updateUserInfo(userDetail: User) {
     setUser(userDetail);
     sessionStorage.setItem("user", JSON.stringify(userDetail));
     sessionStorage.setItem("loggedin", "true");
   }
 
-  // A wrapper for <Route> that redirects to the login
-  // screen if you're not yet authenticated.
-
   return (
     <>
       <Navigation user={user} />
       <Routes>
+        {/* Landing page */}
+        <Route path="/" element={<LandingPage />}></Route>
+        {/* Login page */}
         <Route
           path="/login"
           element={<SignIn updateUserInfo={updateUserInfo} />}
         ></Route>
+        {/* Logout page */}
+        <Route path="/logout" element={<></>}></Route>
+        {/* Protected routes */}
         <Route element={<ProtectedRoute user={user} />}>
-          <Route path="analytics" element={<div>analytics</div>}></Route>
-          <Route path="admin" element={<div>admin</div>}></Route>
+          <Route path="app" element={<div>app</div>}></Route>
         </Route>
-        <Route
-          path="*"
-          element={
-            <div>
-              <h2>Test</h2>
-              <div>catchall</div>
-            </div>
-          }
-        ></Route>
       </Routes>
     </>
   );
 }
+
+const LandingPage = () => (
+  <Container>
+    <Paper elevation={3}>
+      <Typography variant="h4">Welcome to My App!</Typography>
+      <Typography variant="body1">
+        This is a to-do list app where you can...
+      </Typography>
+    </Paper>
+  </Container>
+);
 
 const Navigation = ({ user }: NavProps) => (
   <AppBar position="static">
@@ -92,6 +100,9 @@ const Navigation = ({ user }: NavProps) => (
           Login
         </Button>
       )}
+      <Button color="inherit" component={Link} to="/app">
+        app
+      </Button>
       <Button color="inherit" component={Link} to="/admin">
         Admin
       </Button>

@@ -24,6 +24,10 @@ interface ServerResponse {
   user_detail?: User; // assuming `User` is the interface you've defined for user details
 }
 
+interface SignInProps {
+  updateUserInfo: (userDetail: User) => void;
+}
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -66,7 +70,7 @@ function Copyright() {
   );
 }
 
-export default function SignIn({ updateUserInfo }: any) {
+export default function SignIn({ updateUserInfo }: SignInProps) {
   const classes = useStyles();
 
   const [submitting, setSubmitting] = useState(false);
@@ -74,7 +78,6 @@ export default function SignIn({ updateUserInfo }: any) {
   const [loading, setLoading] = useState(true);
   const [csrfmiddlewaretoken, setCsrfmiddlewaretoken] = useState("");
 
-  let history = useNavigate();
   let location = useLocation();
 
   useEffect(() => {
