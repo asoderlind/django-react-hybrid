@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import AuthContext from "../context/AuthContext";
+import React, { useState, useEffect, useContext } from "react";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -15,7 +16,7 @@ import {
 
 import { User } from "../models";
 
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { config } from "../config";
 
 interface ServerResponse {
@@ -27,6 +28,20 @@ interface ServerResponse {
 interface SignInProps {
   updateUserInfo: (userDetail: User) => void;
 }
+
+const LoginPage = () => {
+  let { loginUser } = useContext(AuthContext);
+
+  return (
+    <div>
+      <form onSubmit={loginUser}>
+        <input type="text" name="username" placeholder="Enter username" />
+        <input type="password" name="password" placeholder="enter password" />
+        <input type="submit" />
+      </form>
+    </div>
+  );
+};
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -70,7 +85,7 @@ function Copyright() {
   );
 }
 
-export default function SignIn({ updateUserInfo }: SignInProps) {
+function SignIn({ updateUserInfo }: SignInProps) {
   const classes = useStyles();
 
   const [submitting, setSubmitting] = useState(false);
@@ -146,7 +161,6 @@ export default function SignIn({ updateUserInfo }: SignInProps) {
             errorMsg = data["error"]!;
           } else {
             loginSuccess = true;
-            //updateUserInfo(data["user_detail"]);
           }
         } else {
           errorMsg = "Login attempt failed, try again!";
@@ -207,7 +221,6 @@ export default function SignIn({ updateUserInfo }: SignInProps) {
               Sign In
             </Button>
           </form>
-
           {(loading || submitting) && (
             <CircularProgress size={68} className={classes.fabProgress} />
           )}
@@ -219,3 +232,5 @@ export default function SignIn({ updateUserInfo }: SignInProps) {
     </div>
   );
 }
+
+export default LoginPage;
