@@ -24,12 +24,6 @@ const Header = () => {
             Login
           </Button>
         )}
-        <Button color="inherit" component={Link} to="/app">
-          app
-        </Button>
-        <Button color="inherit" component={Link} to="/admin">
-          Admin
-        </Button>
       </Toolbar>
     </AppBar>
   );
