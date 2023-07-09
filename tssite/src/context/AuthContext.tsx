@@ -10,14 +10,12 @@ interface ContextProps {
   logoutUser: (e: any) => void;
 }
 
-const contextDefaultValues: ContextProps = {
+const AuthContext = createContext<ContextProps>({
   user: null,
   authTokens: null,
   loginUser: (e: any) => {},
   logoutUser: (e: any) => {},
-};
-
-const AuthContext = createContext(contextDefaultValues);
+});
 
 export default AuthContext;
 
@@ -96,6 +94,9 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   useEffect(() => {
+    if (loading) {
+      updateToken();
+    }
     const REFRESH_INTERVAL = 1000 * 60 * 4; // 4 minutes
     let interval = setInterval(() => {
       if (authTokens) {
@@ -103,7 +104,7 @@ export const AuthProvider = ({ children }: any) => {
       }
     }, REFRESH_INTERVAL);
     return () => clearInterval(interval);
-  }, [authTokens]);
+  }, [authTokens, loading]);
 
   return (
     <AuthContext.Provider value={contextData}>{children}</AuthContext.Provider>

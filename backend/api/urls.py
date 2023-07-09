@@ -1,12 +1,19 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from . import api_views
+from .api_views import (
+    MyTokenObtainPairView,
+    ToDoListCreateView,
+    ToDoRetrieveUpdateDestroyView,
+    get_profile,
+    get_routes,
+)
 
 urlpatterns = [
-    path("", api_views.get_routes),
-    path("token/", api_views.MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("", get_routes),
+    path("token/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("todos/", api_views.ToDoListCreateView.as_view()),
-    path("todos/<int:pk>", api_views.ToDoRetrieveUpdateDestroyView.as_view()),
+    path("todos/", ToDoListCreateView.as_view()),
+    path("todos/<int:pk>", ToDoRetrieveUpdateDestroyView.as_view()),
+    path("profile/", get_profile, name="profile"),
 ]
