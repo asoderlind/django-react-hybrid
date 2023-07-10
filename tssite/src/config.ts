@@ -5,8 +5,8 @@ interface Config {
 }
 
 const prod: Config = {
-  baseUrl: "",
-  apiUrl: "/api",
+  baseUrl: "http://localhost:8000",
+  apiUrl: "http://localhost:8000/api",
   credentials: "same-origin",
 };
 

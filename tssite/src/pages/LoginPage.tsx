@@ -2,6 +2,7 @@ import AuthContext from "../context/AuthContext";
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import { config } from "../config";
 import jwtDecode from "jwt-decode";
 import { TokenResponse } from "../models";
 import { makeStyles } from "@material-ui/core/styles";
@@ -77,9 +78,8 @@ const LoginPage = () => {
 
     const formData = new FormData(event.currentTarget);
 
-    let loginSuccess = false;
     let submitFailedTemp = false;
-    const url = "http://localhost:8000/api/token/";
+    const url = `${config.apiUrl}/token/`;
 
     fetch(url, {
       method: "POST",
@@ -99,7 +99,6 @@ const LoginPage = () => {
           errorMsg = "Failed to authenticate, try again!";
         }
         if (data) {
-          loginSuccess = true;
           localStorage.setItem("authTokens", JSON.stringify(data));
           if (setAuthTokens) {
             setAuthTokens(data);

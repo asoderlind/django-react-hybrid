@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    if (loading) {
+    if (loading && authTokens) {
       updateToken();
     }
     const REFRESH_INTERVAL = 1000 * 60 * 4; // 4 minutes

@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import Header from "./components/Header";
 import PrivateRoute from "./utils/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { config } from "./config";
 
 function App() {
   return (
@@ -26,15 +27,6 @@ function App() {
       </AuthProvider>
     </Router>
   );
-}
-
-async function getTodos() {
-  const res = await fetch("http://localhost:8000/api/todos/", {
-    credentials: "include",
-  });
-  const data = await res.json();
-  console.log(data);
-  return data;
 }
 
 export default App;
