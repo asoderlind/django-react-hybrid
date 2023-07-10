@@ -1,3 +1,6 @@
+"""
+Profiles App Config
+"""
 from django.apps import AppConfig
 
 

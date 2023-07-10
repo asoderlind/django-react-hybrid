@@ -1,3 +1,6 @@
+"""
+Serializers for the profiles app.
+"""
 from django.contrib.auth.models import User
 from rest_framework import serializers
 

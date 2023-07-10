@@ -1,4 +1,6 @@
-# Create your models here.
+"""
+This file contains the Profile model.
+"""
 from django.contrib.auth.models import User
 from django.db import models
 
