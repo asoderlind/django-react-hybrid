@@ -1,15 +1,11 @@
 """
 Views for the API
 """
-from rest_framework import generics
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .models import ToDo
-from .serializers import MyTokenObtainPairSerializer, ProfileSerializer, ToDoSerializer
+from .serializers import MyTokenObtainPairSerializer
 
 
 @api_view(["GET"])
@@ -24,40 +20,9 @@ def get_routes(request):
     return Response(routes)
 
 
-class ToDoListCreateView(generics.ListCreateAPIView):
-    """
-    API endpoint that allows To-Do items to be viewed or created
-    """
-
-    queryset = ToDo.objects.all()
-    serializer_class = ToDoSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-
-class ToDoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    API endpoint that allows a single To-Do item to be viewed, edited, or deleted.
-    """
-
-    queryset = ToDo.objects.all()
-    serializer_class = ToDoSerializer
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-
 class MyTokenObtainPairView(TokenObtainPairView):
     """
     API endpoint that allows a user to obtain a JWT token
     """
 
     serializer_class = MyTokenObtainPairSerializer
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def get_profile(request):
-    user = request.user
-    profile = user.profile
-    serializer = ProfileSerializer(profile, many=False)
-    return Response(serializer.data)
