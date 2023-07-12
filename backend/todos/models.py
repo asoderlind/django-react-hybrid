@@ -13,3 +13,6 @@ class ToDo(models.Model):
     class Meta:
         verbose_name = "To-Do"
         verbose_name_plural = "To-Do List"
+
+    def __str__(self) -> str:
+        return str(self.task)

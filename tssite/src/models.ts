@@ -1,9 +1,9 @@
-export interface TokenResponse {
+export interface AuthTokenResponse {
   access: string;
   refresh: string;
 }
 
-export interface AuthToken {
+export interface DecodedAuthToken {
   token_type: string;
   exp: number;
   iat: number;

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { config } from "../config";
 import jwtDecode from "jwt-decode";
-import { TokenResponse } from "../models";
+import { AuthTokenResponse } from "../models";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
@@ -17,7 +17,6 @@ import {
   TextField,
   CircularProgress,
 } from "@material-ui/core";
-import { Token } from "typescript";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -62,7 +61,7 @@ function Copyright() {
 }
 
 const LoginPage = () => {
-  let { setAuthTokens, setUser } = useContext(AuthContext);
+  let { setAuthTokens, setDecodedAuthToken } = useContext(AuthContext);
 
   const classes = useStyles();
 
@@ -93,7 +92,7 @@ const LoginPage = () => {
         }
         return response.json();
       })
-      .then((data: TokenResponse | null) => {
+      .then((data: AuthTokenResponse | null) => {
         var errorMsg = "";
         if (submitFailedTemp) {
           errorMsg = "Failed to authenticate, try again!";
@@ -103,8 +102,8 @@ const LoginPage = () => {
           if (setAuthTokens) {
             setAuthTokens(data);
           }
-          if (setUser) {
-            setUser(jwtDecode(data.access));
+          if (setDecodedAuthToken) {
+            setDecodedAuthToken(jwtDecode(data.access));
           }
           navigate("/");
         } else {
