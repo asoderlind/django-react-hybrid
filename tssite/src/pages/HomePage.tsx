@@ -10,7 +10,7 @@ import {
   ListItem,
   ListItemText,
   CircularProgress,
-} from "@material-ui/core";
+} from "@mui/material";
 
 const HomePage = () => {
   const { decodedAuthToken, authTokens } = React.useContext(AuthContext);
@@ -31,8 +31,12 @@ const HomePage = () => {
         ...commonHeaders,
       },
     });
-    const data = await res.json();
-    setTodos(data);
+    if (!res.ok) {
+      console.log("Error fetching todos");
+    } else {
+      const data = await res.json();
+      setTodos(data);
+    }
   }
 
   async function createTodo(task: string) {
@@ -50,9 +54,20 @@ const HomePage = () => {
     });
     if (!res.ok) {
       console.log("Error creating new todo");
+    } else {
+      const newTodo = await res.json();
+      setTodos([...todos, newTodo]);
     }
-    const newTodo = await res.json();
-    setTodos([...todos, newTodo]);
+  }
+
+  async function deleteTodo(todo_id: string) {
+    const res = await fetch(`${config.apiUrl}/todos/${todo_id}/`, {
+      method: "DELETE",
+      credentials: config.credentials,
+      headers: {
+        ...commonHeaders,
+      },
+    });
   }
 
   useEffect(() => {
@@ -64,7 +79,6 @@ const HomePage = () => {
       <Typography variant="h4">
         You are logged in to the homepage! {decodedAuthToken.username}
       </Typography>
-      <TodoForm createTodo={createTodo} />
       <Typography variant="h5">Todos</Typography>
       {todos ? (
         <List>
@@ -80,6 +94,7 @@ const HomePage = () => {
       ) : (
         <CircularProgress />
       )}
+      <TodoForm createTodo={createTodo} />
     </Container>
   ) : (
     <Container>

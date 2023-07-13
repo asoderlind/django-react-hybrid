@@ -1,11 +1,10 @@
 import AuthContext from "../context/AuthContext";
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { config } from "../config";
 import jwtDecode from "jwt-decode";
 import { AuthTokenResponse } from "../models";
-import { makeStyles } from "@material-ui/core/styles";
 import {
   Avatar,
   Button,
@@ -16,36 +15,37 @@ import {
   Typography,
   TextField,
   CircularProgress,
-} from "@material-ui/core";
+} from "@mui/material";
 
-const useStyles = makeStyles((theme) => ({
+const styles = {
   paper: {
-    marginTop: theme.spacing(8),
+    mt: 8,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
   wrapper: {
-    margin: theme.spacing(1),
+    m: 1,
     position: "relative",
   },
   avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    m: 1,
+    backgroundColor: "secondary.main",
   },
   form: {
     width: "100%", // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
+    mt: 1,
   },
   submit: {
-    margin: theme.spacing(3, 0, 2),
+    mt: 3,
+    mb: 2,
   },
   fabProgress: {
     position: "absolute",
     top: "40%",
     zIndex: 1,
   },
-}));
+};
 
 function Copyright() {
   return (
@@ -62,8 +62,6 @@ function Copyright() {
 
 const LoginPage = () => {
   let { setAuthTokens, setDecodedAuthToken } = useContext(AuthContext);
-
-  const classes = useStyles();
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -115,11 +113,11 @@ const LoginPage = () => {
   };
 
   return (
-    <div className={classes.wrapper}>
+    <Box sx={styles.wrapper}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
+        <Box sx={styles.paper}>
+          <Avatar sx={styles.avatar}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
@@ -156,20 +154,18 @@ const LoginPage = () => {
               fullWidth
               variant="contained"
               color="primary"
-              className={classes.submit}
+              sx={styles.submit}
             >
               Sign In
             </Button>
           </form>
-          {submitting && (
-            <CircularProgress size={68} className={classes.fabProgress} />
-          )}
-        </div>
+          {submitting && <CircularProgress size={68} sx={styles.fabProgress} />}
+        </Box>
         <Box mt={8}>
           <Copyright />
         </Box>
       </Container>
-    </div>
+    </Box>
   );
 };
 

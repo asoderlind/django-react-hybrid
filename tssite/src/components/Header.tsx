@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { AppBar, Toolbar, Typography, Button } from "@material-ui/core";
+import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import AuthContext from "../context/AuthContext";
 
 const Header = () => {

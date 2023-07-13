@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "@mui/material/Button";
 
 interface TodoFormProps {
   createTodo: (task: string) => void;
@@ -22,7 +23,7 @@ const TodoForm = ({ createTodo }: TodoFormProps) => {
         placeholder="New todo"
         required
       />
-      <button type="submit">Add Todo</button>
+      <Button type="submit">Add Todo</Button>
     </form>
   );
 };
