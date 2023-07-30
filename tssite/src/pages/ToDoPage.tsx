@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import AuthContext from "../context/AuthContext";
 import { config } from "../config";
 import { Todo } from "../models";
-import TodoForm from "../components/TodoForm";
 import {
   Container,
   Typography,
@@ -10,6 +9,10 @@ import {
   ListItem,
   ListItemText,
   CircularProgress,
+  Button,
+  TextField,
+  FormControl,
+  FormLabel,
 } from "@mui/material";
 
 const styles = {
@@ -21,9 +24,24 @@ const styles = {
   },
 };
 
-const HomePage = () => {
+interface TodoProps {
+  id: number;
+  task: string;
+  is_complete: boolean;
+  handleRemove: (id: number) => void;
+  handleCheck: (id: number, checked: boolean) => void;
+}
+
+interface TodoListProps {
+  todos: Array<TodoProps>;
+  handleRemove: (id: number) => void;
+  handleCheck: (id: number, checked: boolean) => void;
+}
+
+const ToDoView: React.FC = () => {
   const { decodedAuthToken, authTokens } = React.useContext(AuthContext);
   const [todos, setTodos] = React.useState<Todo[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
   if (!authTokens) {
     throw new Error("No auth tokens");
@@ -33,22 +51,39 @@ const HomePage = () => {
     Authorization: `Bearer ${authTokens.access}`,
   };
 
-  async function fetchTodos() {
-    const res = await fetch(`${config.apiUrl}/todos/`, {
-      credentials: config.credentials,
-      headers: {
-        ...commonHeaders,
-      },
-    });
-    if (!res.ok) {
-      console.log("Error fetching todos");
-    } else {
-      const data = await res.json();
-      setTodos(data);
-    }
-  }
+  const getData = React.useCallback(() => {
+    var url = `${config.apiUrl}/todos`;
+    loading &&
+      fetch(url, {
+        credentials: config.credentials,
+        headers: {
+          ...commonHeaders,
+        },
+      })
+        .then((response) => {
+          const contentType = response.headers.get("content-type");
+          if (!response.ok) {
+            return [];
+          } else if (
+            contentType &&
+            contentType.indexOf("application/json") !== -1
+          ) {
+            return response.json();
+          } else {
+            return [];
+          }
+        })
+        .then((res) => {
+          setTodos(res);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.error("Something went wrong with connection!:", error);
+        });
+  }, [loading]);
 
-  async function createTodo(task: string) {
+  async function handleAdd(task: string) {
     const res = await fetch(`${config.apiUrl}/todos/`, {
       method: "POST",
       credentials: config.credentials,
@@ -69,7 +104,7 @@ const HomePage = () => {
     }
   }
 
-  async function deleteTodo(todo_id: string) {
+  async function handleRemove(todo_id: string) {
     const res = await fetch(`${config.apiUrl}/todos/${todo_id}/`, {
       method: "DELETE",
       credentials: config.credentials,
@@ -79,8 +114,10 @@ const HomePage = () => {
     });
   }
 
+  function handleCheck() {}
+
   useEffect(() => {
-    fetchTodos();
+    getData();
   }, [authTokens]);
 
   return decodedAuthToken ? (
@@ -88,7 +125,7 @@ const HomePage = () => {
       <Typography variant="h4" sx={styles.header}>
         Welcome, {decodedAuthToken.username}!
       </Typography>
-      <TodoForm createTodo={createTodo} />
+      <TodoForm createTodo={handleAdd} />
       <Typography variant="h5">Todos</Typography>
       {todos ? (
         <List>
@@ -114,4 +151,33 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+interface TodoFormProps {
+  createTodo: (task: string) => void;
+}
+
+const TodoForm = ({ createTodo }: TodoFormProps) => {
+  const [newTodo, setNewTodo] = React.useState("");
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        createTodo(newTodo);
+        setNewTodo("");
+      }}
+    >
+      <FormControl>
+        <FormLabel htmlFor="newTodo">New Todo</FormLabel>
+        <TextField
+          value={newTodo}
+          onChange={(e) => setNewTodo(e.target.value)}
+          placeholder="New todo"
+          required
+        />
+        <Button type="submit">Add Todo</Button>
+      </FormControl>
+    </form>
+  );
+};
+
+export default ToDoView;
