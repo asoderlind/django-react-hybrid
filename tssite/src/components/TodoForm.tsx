@@ -1,5 +1,11 @@
 import React from "react";
-import Button from "@mui/material/Button";
+import {
+  Input,
+  Button,
+  TextField,
+  FormControl,
+  FormLabel,
+} from "@mui/material";
 
 interface TodoFormProps {
   createTodo: (task: string) => void;
@@ -16,14 +22,16 @@ const TodoForm = ({ createTodo }: TodoFormProps) => {
         setNewTodo("");
       }}
     >
-      <input
-        type="text"
-        value={newTodo}
-        onChange={(e) => setNewTodo(e.target.value)}
-        placeholder="New todo"
-        required
-      />
-      <Button type="submit">Add Todo</Button>
+      <FormControl>
+        <FormLabel htmlFor="newTodo">New Todo</FormLabel>
+        <TextField
+          value={newTodo}
+          onChange={(e) => setNewTodo(e.target.value)}
+          placeholder="New todo"
+          required
+        />
+        <Button type="submit">Add Todo</Button>
+      </FormControl>
     </form>
   );
 };

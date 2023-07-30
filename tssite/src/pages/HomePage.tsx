@@ -12,6 +12,15 @@ import {
   CircularProgress,
 } from "@mui/material";
 
+const styles = {
+  header: {
+    mt: 2,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+};
+
 const HomePage = () => {
   const { decodedAuthToken, authTokens } = React.useContext(AuthContext);
   const [todos, setTodos] = React.useState<Todo[]>([]);
@@ -76,9 +85,10 @@ const HomePage = () => {
 
   return decodedAuthToken ? (
     <Container>
-      <Typography variant="h4">
-        You are logged in to the homepage! {decodedAuthToken.username}
+      <Typography variant="h4" sx={styles.header}>
+        Welcome, {decodedAuthToken.username}!
       </Typography>
+      <TodoForm createTodo={createTodo} />
       <Typography variant="h5">Todos</Typography>
       {todos ? (
         <List>
@@ -94,7 +104,6 @@ const HomePage = () => {
       ) : (
         <CircularProgress />
       )}
-      <TodoForm createTodo={createTodo} />
     </Container>
   ) : (
     <Container>
