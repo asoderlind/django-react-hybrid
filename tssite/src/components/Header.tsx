@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { AppBar, Toolbar, Typography, Button } from "@material-ui/core";
+import { AppBar, Toolbar, Typography, Button } from "@mui/material";
 import AuthContext from "../context/AuthContext";
 
 const Header = () => {
-  let { user, logoutUser } = useContext(AuthContext);
+  let { decodedAuthToken, logoutUser } = useContext(AuthContext);
 
   return (
     <AppBar position="static">
@@ -15,7 +15,7 @@ const Header = () => {
         <Button color="inherit" component={Link} to="/">
           Home
         </Button>
-        {user ? (
+        {decodedAuthToken ? (
           <Button color="inherit" onClick={logoutUser}>
             Logout
           </Button>

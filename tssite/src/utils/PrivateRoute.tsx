@@ -4,8 +4,8 @@ import { Outlet } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 
 const ProtectedRoute = ({ redirectPath = "/login", children }: any) => {
-  let { user } = useContext(AuthContext);
-  if (!user) {
+  let { decodedAuthToken } = useContext(AuthContext);
+  if (!decodedAuthToken) {
     return <Navigate to={redirectPath} replace />;
   }
   return children ? children : <Outlet />;
