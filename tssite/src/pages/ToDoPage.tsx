@@ -128,7 +128,8 @@ const ToDoView: React.FC = () => {
   }
 
   async function handleRemove(id: number) {
-    fetch(`${config.apiUrl}/todos/${id}`, {
+    var url = `${config.apiUrl}/todos/${id}`;
+    fetch(url, {
       method: "DELETE",
       credentials: config.credentials,
       headers: {
@@ -145,7 +146,29 @@ const ToDoView: React.FC = () => {
       });
   }
 
-  function handleCheck() {}
+  async function handleCheck(id: number) {
+    var url = `${config.apiUrl}/todos/${id}`;
+    const todoToCheck = todos.find((todo) => todo.id === id);
+    if (todoToCheck) {
+      const updatedTodo = {
+        ...todoToCheck,
+        is_complete: !todoToCheck.is_complete,
+      };
+      fetch(url, {
+        method: "PATCH",
+        credentials: config.credentials,
+        headers: {
+          ...commonHeaders,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedTodo),
+      }).then((res) => {
+        if (!res.ok) {
+          console.log("Something went wrong when checking todo");
+        }
+      });
+    }
+  }
 
   useEffect(() => {
     getData();
