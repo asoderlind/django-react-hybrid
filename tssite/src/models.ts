@@ -11,10 +11,3 @@ export interface DecodedAuthToken {
   user_id: number;
   username: string;
 }
-
-export interface Todo {
-  id: number;
-  task: string;
-  is_complete: boolean;
-  created_datetime: string;
-}
