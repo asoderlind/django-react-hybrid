@@ -1,12 +1,13 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import HomePage from "./pages/ToDoPage";
+import HomePage from "./pages/HomePage";
+import ToDoPage from "./pages/ToDoPage";
+import SignalPage from "./pages/SignalPage";
 import LoginPage from "./pages/LoginPage";
 import Header from "./components/Header";
 import PrivateRoute from "./utils/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
-import { config } from "./config";
 
 function App() {
   return (
@@ -19,6 +20,22 @@ function App() {
             element={
               <PrivateRoute>
                 <HomePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/todo"
+            element={
+              <PrivateRoute>
+                <ToDoPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/signal"
+            element={
+              <PrivateRoute>
+                <SignalPage />
               </PrivateRoute>
             }
           />

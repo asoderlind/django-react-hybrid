@@ -15,6 +15,12 @@ const Header = () => {
         <Button color="inherit" component={Link} to="/">
           Home
         </Button>
+        <Button color="inherit" component={Link} to="/todo">
+          ToDo
+        </Button>
+        <Button color="inherit" component={Link} to="/signal">
+          SignalPage
+        </Button>
         {decodedAuthToken ? (
           <Button color="inherit" onClick={logoutUser}>
             Logout

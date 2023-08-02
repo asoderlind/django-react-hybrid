@@ -20,7 +20,6 @@ import {
 } from "@mui/material";
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import { error } from "console";
 
 const styles = {
   header: {
@@ -43,10 +42,6 @@ interface TodoListProps {
   todos: Array<TodoProps>;
   handleRemove: (id: number) => void;
   handleCheck: (id: number, checked: boolean) => void;
-}
-
-interface TodoFormProps {
-  createTodo: (task: string) => void;
 }
 
 interface AddTodoProps {
@@ -258,31 +253,6 @@ const TodoList: React.FC<TodoListProps> = ({
   });
 
   return <List style={{ marginLeft: "5%" }}>{todoNode}</List>;
-};
-
-const TodoForm = ({ createTodo }: TodoFormProps) => {
-  const [newTodo, setNewTodo] = React.useState("");
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        createTodo(newTodo);
-        setNewTodo("");
-      }}
-    >
-      <FormControl>
-        <FormLabel htmlFor="newTodo">New Todo</FormLabel>
-        <TextField
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-          placeholder="New todo"
-          required
-        />
-        <Button type="submit">Add Todo</Button>
-      </FormControl>
-    </form>
-  );
 };
 
 function AddTodo({ handleAdd }: AddTodoProps) {
