@@ -1,4 +1,3 @@
-import SineWave from "../components/SineWave";
 
 interface SignalPageViewProps {}
 
@@ -12,7 +11,6 @@ const SignalPageView: React.FC<SignalPageViewProps> = (props) => {
         voluptatibus quos quas natus. Quisquam voluptatum, quibusdam, quia, quae
         voluptatem voluptas quod dolorum voluptatibus quos quas natus.
       </p>
-      <SineWave />
     </div>
   );
 };
